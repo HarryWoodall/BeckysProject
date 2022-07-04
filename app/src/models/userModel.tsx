@@ -7,7 +7,7 @@ export default interface UserModel {
   known: string;
   seenLast: string;
   mutualFriends: string[];
-  category: string | null;
+  category: string[];
   lastTalkAbout: string;
   avoidTalkingAbout: string;
   notes: string;
