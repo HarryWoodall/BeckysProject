@@ -11,24 +11,24 @@ import UserModel from "../models/userModel";
 export type RootStackParamList = {
   Homepage: undefined;
   Search: undefined;
-  NewPerson: { previousScreen: keyof RootStackParamList } | undefined;
-  PersonProfile: { id: string };
+  Person: { id: string };
+  PersonForm: { previousScreen: keyof RootStackParamList; personModel?: UserModel } | undefined;
   Event: { id: string };
-  NewEvent: { previousScreen: keyof RootStackParamList } | undefined;
+  EventForm: { previousScreen: keyof RootStackParamList; eventModel?: EventModel } | undefined;
   Category: { id: string };
-  NewCategory: { previousScreen: keyof RootStackParamList } | undefined;
+  CategoryForm: { previousScreen: keyof RootStackParamList; categoryModel?: CategoryModel } | undefined;
 };
 
 export type HomepageProps = NativeStackScreenProps<RootStackParamList, "Homepage">;
 export type SearchViewProps = NativeStackScreenProps<RootStackParamList, "Search">;
-export type NewPersonProps = NativeStackScreenProps<RootStackParamList, "NewPerson">;
-export type PersonProfileProps = NativeStackScreenProps<RootStackParamList, "PersonProfile">;
+export type PersonFormProps = NativeStackScreenProps<RootStackParamList, "PersonForm">;
+export type PersonProps = NativeStackScreenProps<RootStackParamList, "Person">;
 export type EventProps = NativeStackScreenProps<RootStackParamList, "Event">;
-export type NewEventProps = NativeStackScreenProps<RootStackParamList, "NewEvent">;
+export type EventFormProps = NativeStackScreenProps<RootStackParamList, "EventForm">;
 export type CategoryProps = NativeStackScreenProps<RootStackParamList, "Category">;
-export type NewCategoryProps = NativeStackScreenProps<RootStackParamList, "NewCategory">;
+export type CategoryFormProps = NativeStackScreenProps<RootStackParamList, "CategoryForm">;
 
-export type userCardProps = {
+export type UserCardProps = {
   name: string;
   description: string;
 };
@@ -44,6 +44,7 @@ export type ClickableLinkProps = {
   onPress: (event: GestureResponderEvent) => void;
   key?: string;
   textStyle?: TextStyle;
+  containerStyle?: ViewStyle;
 };
 
 export type TextListProps = {
@@ -101,7 +102,7 @@ export interface HomepageStyles {
   icon: ImageStyle;
 }
 
-export interface PersonProfileStyles {
+export interface PersonStyles {
   basicInfo: ViewStyle;
   icon: ImageStyle;
   lastSawThemContainer: ViewStyle;
@@ -110,8 +111,10 @@ export interface PersonProfileStyles {
   detailInfo: ViewStyle;
 }
 
-export interface NewPersonStyles {
+export interface PersonFormStyles {
   basicInfo: ViewStyle;
+  dateAndEventContainer: ViewStyle;
+  eventPicker: ViewStyle;
   pickerContainer: ViewStyle;
   selectionsContainer: ViewStyle;
   picker: ViewStyle;

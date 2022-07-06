@@ -10,6 +10,8 @@ import CategoryModel from "../models/categoryModel";
 import SearchResultsPartial from "../partials/searchResults";
 
 const SearchView = ({ navigation }: SearchViewProps) => {
+  const isFocused = useIsFocused();
+
   const [searchTerm, setSearchTerm] = useState<string>(":all");
   const [people, setPeople] = useState<UserModel[]>();
   const [events, setEvents] = useState<EventModel[]>();
@@ -18,7 +20,7 @@ const SearchView = ({ navigation }: SearchViewProps) => {
 
   useEffect(() => {
     handleSearch(searchTerm);
-  }, []);
+  }, [isFocused]);
 
   const handleSearch = (searchTerm: string) => {
     if (searchTerm.length > 1) {

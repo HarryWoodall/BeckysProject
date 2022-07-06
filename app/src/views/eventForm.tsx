@@ -2,14 +2,15 @@ import { Text, View, ScrollView, Image, Pressable, TextInput } from "react-nativ
 import React, { useState, useEffect, Dispatch } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useIsFocused } from "@react-navigation/native";
-import { NewEventProps } from "../common/types";
+import { EventFormProps } from "../common/types";
 import CommonStyles from "../styles/common";
 import DefaultButton from "../components/defaultButton";
 import EventModel from "../models/eventModel";
-import { getAllUsers, removeAllEvents, storeEvent } from "../services/dataService";
+import { getAllUsers, getUsers, removeAllEvents, storeEvent, updateEvent } from "../services/dataService";
 import DropDownPicker from "react-native-dropdown-picker";
+import UserModel from "../models/userModel";
 
-const NewEvent = ({ route, navigation }: NewEventProps) => {
+const NewEvent = ({ route, navigation }: EventFormProps) => {
   const isFocused = useIsFocused();
 
   const [eventName, setEventName] = useState<string>("");
@@ -18,9 +19,9 @@ const NewEvent = ({ route, navigation }: NewEventProps) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [datePickerText, setDatePickerText] = useState("Event Date");
 
-  const [openSelector, setOpenSelector] = useState(false);
-  const [selectorValue, setSelectorValue] = useState([]);
-  const [selectorItems, setSelectorItems] = useState<ItemSchema[]>([]);
+  const [openAttendeesSelector, setOpenAttendeesSelector] = useState(false);
+  const [attendeesValue, setAttendeesValue] = useState<string[]>([]);
+  const [attendeesItems, setAttendeesItems] = useState<UserModel[]>([]);
 
   interface ItemSchema {
     label: string;
@@ -28,19 +29,33 @@ const NewEvent = ({ route, navigation }: NewEventProps) => {
   }
 
   useEffect(() => {
-    async function getUserData() {
-      const userData = await getAllUsers();
-
-      setSelectorItems(
-        userData!.map((user): ItemSchema => {
-          return { label: user.name, value: user.id! };
-        })
-      );
+    if (route.params?.eventModel) {
+      const event = route.params.eventModel;
+      setEventName(event.name);
+      setEventDate(new Date(event.date));
+      setDatePickerText(new Date(event.date).toLocaleDateString());
     }
-    console.log("User data update");
 
-    getUserData();
+    async function getUserData(ids: string[] = []) {
+      const userData = await getAllUsers();
+      setAttendeesItems(userData!);
+
+      if (ids.length > 0) {
+        setAttendeesValue(ids);
+      }
+    }
+    console.log("Event data update");
+
+    getUserData(route.params?.eventModel?.attendees);
   }, [isFocused]);
+
+  useEffect(() => {
+    if (attendeesValue.includes("NEW_PERSON")) {
+      setAttendeesValue([]);
+
+      navigation.push("PersonForm", { previousScreen: "EventForm" });
+    }
+  }, [attendeesValue]);
 
   const onChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate;
@@ -57,15 +72,30 @@ const NewEvent = ({ route, navigation }: NewEventProps) => {
     const event: EventModel = {
       name: eventName,
       date: eventDate.toString(),
-      attendees: selectorValue,
+      attendees: attendeesValue,
+      id: route.params?.eventModel?.id,
     };
 
     async function storeData() {
-      await storeEvent(event);
-      navigation.navigate(route.params?.previousScreen || "Homepage");
+      if (route.params?.eventModel) {
+        await updateEvent(event, event.id!);
+      } else {
+        await storeEvent(event);
+      }
+      // navigation.navigate(route.params?.previousScreen || "Homepage");
+      navigation.goBack();
     }
 
     storeData();
+  };
+
+  const mapAttendees = () => {
+    let attendees = attendeesItems?.map((item) => {
+      return { label: item.name, value: item.id };
+    });
+
+    attendees.push({ label: "New Attendee...", value: "NEW_PERSON" });
+    return attendees;
   };
 
   return (
@@ -76,7 +106,7 @@ const NewEvent = ({ route, navigation }: NewEventProps) => {
         </View>
 
         <View>
-          <TextInput onChangeText={(newText) => setEventName(newText)} placeholder="Event Name" style={CommonStyles.textbox} />
+          <TextInput onChangeText={(newText) => setEventName(newText)} placeholder="Event Name" style={CommonStyles.textbox} value={eventName} />
           <Pressable onPress={showDatepicker}>
             <Text style={CommonStyles.dateDisplayText}>{datePickerText}</Text>
           </Pressable>
@@ -85,12 +115,12 @@ const NewEvent = ({ route, navigation }: NewEventProps) => {
 
         <DropDownPicker
           mode="BADGE"
-          open={openSelector}
-          value={selectorValue}
-          items={selectorItems}
-          setOpen={setOpenSelector}
-          setValue={setSelectorValue}
-          setItems={setSelectorItems}
+          open={openAttendeesSelector}
+          value={attendeesValue}
+          items={mapAttendees()}
+          setOpen={setOpenAttendeesSelector}
+          setValue={setAttendeesValue}
+          setItems={setAttendeesItems}
           multiple={true}
           placeholder="Attendees"
           containerStyle={CommonStyles.dropDownPicker}

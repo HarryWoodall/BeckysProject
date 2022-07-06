@@ -24,15 +24,15 @@ const HomepageView = ({ navigation }: HomepageProps) => {
   };
 
   const navigateNewUser = () => {
-    navigation.navigate("NewPerson");
+    navigation.navigate("PersonForm");
   };
 
   const navigateNewEvent = () => {
-    navigation.navigate("NewEvent");
+    navigation.navigate("EventForm");
   };
 
   const navigateNewCategory = () => {
-    navigation.navigate("NewCategory");
+    navigation.navigate("CategoryForm");
   };
 
   useEffect(() => {

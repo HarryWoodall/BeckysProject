@@ -1,15 +1,15 @@
 import { Text, View, ScrollView, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import { EventProps } from "../common/types";
+import { EventProps, Link } from "../common/types";
 import CommonStyles from "../styles/common";
-import PersonProfileStyles from "../styles/personProfile";
 import { getEvent, getUsers } from "../services/dataService";
 import DefaultButton from "../components/defaultButton";
 import TextList from "../components/textList";
 import EventModel from "../models/eventModel";
 import UserModel from "../models/userModel";
 import DataField from "../components/dataField";
+import LinkList from "../components/linkList";
 
 const Event = ({ route, navigation }: EventProps) => {
   const isFocused = useIsFocused();
@@ -40,8 +40,17 @@ const Event = ({ route, navigation }: EventProps) => {
       <DataField title="Date" text={new Date(event?.date!).toLocaleDateString()} />
 
       <View>
-        <TextList list={attendees?.map((item) => item.name)} title="Attendees" messageIfEmpty="No Attendees" />
+        <LinkList
+          list={attendees?.map<Link>((item) => {
+            return { text: item.name, id: item.id! };
+          })}
+          title="Attendees"
+          messageIfEmpty="No Attendees"
+          linkRoute="Person"
+          navigation={navigation}
+        />
       </View>
+      <DefaultButton text="Edit" onPress={() => navigation.navigate("EventForm", { previousScreen: "Event", eventModel: event })} />
     </ScrollView>
   );
 };

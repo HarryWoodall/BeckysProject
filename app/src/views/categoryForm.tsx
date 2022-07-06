@@ -1,16 +1,15 @@
 import { Text, View, ScrollView, Image, Pressable, TextInput } from "react-native";
 import React, { useState, useEffect, Dispatch } from "react";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { useIsFocused } from "@react-navigation/native";
-import { NewCategoryProps, NewEventProps } from "../common/types";
+import { CategoryFormProps, EventFormProps } from "../common/types";
 import CommonStyles from "../styles/common";
 import DefaultButton from "../components/defaultButton";
-import EventModel from "../models/eventModel";
-import { getAllUsers, removeAllCategories, removeAllEvents, storeCategory, storeEvent } from "../services/dataService";
+import { getAllUsers, removeAllCategories, removeAllEvents, storeCategory, storeEvent, updateCategory } from "../services/dataService";
 import DropDownPicker from "react-native-dropdown-picker";
 import CategoryModel from "../models/categoryModel";
+import UserModel from "../models/userModel";
 
-const NewCategory = ({ route, navigation }: NewCategoryProps) => {
+const NewCategory = ({ route, navigation }: CategoryFormProps) => {
   const isFocused = useIsFocused();
 
   const [categoryName, setCategoryName] = useState<string>("");
@@ -18,7 +17,7 @@ const NewCategory = ({ route, navigation }: NewCategoryProps) => {
 
   const [peopleSelector, setPeopleSelector] = useState(false);
   const [peopleValue, setPeopleValue] = useState<string[]>([]);
-  const [selectorItems, setSelectorItems] = useState<ItemSchema[]>([]);
+  const [peopleItems, setPeopleItems] = useState<UserModel[]>([]);
 
   interface ItemSchema {
     label: string;
@@ -26,39 +25,59 @@ const NewCategory = ({ route, navigation }: NewCategoryProps) => {
   }
 
   useEffect(() => {
-    async function getUserData() {
-      const userData = await getAllUsers();
-      var itemData: ItemSchema[] = userData!.map((user): ItemSchema => {
-        return { label: user.name, value: user.id! };
-      });
-
-      itemData.push({ label: "New Person...", value: "NEW_PERSON" });
-
-      setSelectorItems(itemData);
+    if (route.params?.categoryModel) {
+      const category = route.params.categoryModel;
+      setCategoryName(category.name);
+      setCategoryNotes(category.notes);
     }
-    console.log("User data update");
 
-    getUserData();
+    async function getUserData(ids: string[] = []) {
+      const peopleData = await getAllUsers();
+      setPeopleItems(peopleData!);
+
+      if (ids.length > 0) {
+        setPeopleValue(ids);
+      }
+    }
+
+    getUserData(route.params?.categoryModel?.people);
   }, [isFocused]);
 
   useEffect(() => {
     if (peopleValue?.includes("NEW_PERSON")) {
       setPeopleValue([]);
 
-      navigation.push("NewPerson", { previousScreen: "NewCategory" });
+      navigation.push("PersonForm", { previousScreen: "CategoryForm" });
     }
   }, [peopleValue]);
+
+  const mapPeople = () => {
+    let people = peopleItems?.map((item) => {
+      return { label: item.name, value: item.id };
+    });
+
+    people.push({ label: "New Person...", value: "NEW_PERSON" });
+    return people;
+  };
 
   const saveData = () => {
     const category: CategoryModel = {
       name: categoryName,
       people: peopleValue,
       notes: categoryNotes,
+      id: route.params?.categoryModel?.id,
     };
 
     async function storeData() {
-      await storeCategory(category);
-      navigation.navigate(route.params?.previousScreen || "Homepage");
+      if (route.params?.categoryModel) {
+        await updateCategory(category, category.id!);
+        console.log("updating category");
+      } else {
+        await storeCategory(category);
+      }
+
+      navigation.goBack();
+      // navigation.navigate(route.params?.previousScreen || "Homepage");
     }
 
     storeData();
@@ -71,7 +90,7 @@ const NewCategory = ({ route, navigation }: NewCategoryProps) => {
           <Image source={require("../../assets/icon.png")} style={{ width: 150, height: 150, alignSelf: "center" }}></Image>
         </View>
 
-        <TextInput onChangeText={(newText) => setCategoryName(newText)} placeholder="Category Name" style={CommonStyles.textbox} />
+        <TextInput onChangeText={(newText) => setCategoryName(newText)} placeholder="Category Name" style={CommonStyles.textbox} value={categoryName} />
         <TextInput
           multiline
           numberOfLines={4}
@@ -79,15 +98,16 @@ const NewCategory = ({ route, navigation }: NewCategoryProps) => {
           onChangeText={(text) => setCategoryNotes(text)}
           style={CommonStyles.textbox}
           placeholder="Notes"
+          value={categoryNotes}
         />
         <DropDownPicker
           mode="BADGE"
           open={peopleSelector}
           value={peopleValue}
-          items={selectorItems}
+          items={mapPeople()}
           setOpen={setPeopleSelector}
           setValue={setPeopleValue}
-          setItems={setSelectorItems}
+          setItems={setPeopleItems}
           multiple={true}
           placeholder="Persons"
           containerStyle={CommonStyles.dropDownPicker}

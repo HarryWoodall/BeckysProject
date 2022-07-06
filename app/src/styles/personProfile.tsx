@@ -1,8 +1,8 @@
 import * as React from "react";
-import { PersonProfileStyles } from "../common/types";
+import { PersonStyles } from "../common/types";
 import { StyleSheet } from "react-native";
 
-const PersonProfileStyle = StyleSheet.create<PersonProfileStyles>({
+const PersonStyle = StyleSheet.create<PersonStyles>({
   basicInfo: {
     flexDirection: "row",
   },
@@ -21,4 +21,4 @@ const PersonProfileStyle = StyleSheet.create<PersonProfileStyles>({
   },
 });
 
-export default PersonProfileStyle;
+export default PersonStyle;

@@ -22,7 +22,7 @@ const SearchResults = (props: SearchResultsProps) => {
         peopleList.push(
           <ClickableLink
             key={people[i].id}
-            onPress={() => props.navigation.navigate("PersonProfile", { id: people[i].id! })}
+            onPress={() => props.navigation.navigate("Person", { id: people[i].id! })}
             text={people[i].name}
             textStyle={SearchResultsStyles.resultItem}
           />

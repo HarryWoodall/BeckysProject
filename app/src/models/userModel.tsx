@@ -6,9 +6,11 @@ export default interface UserModel {
   age: string;
   known: string;
   seenLast: string;
+  seenLastEvent: string;
   mutualFriends: string[];
   category: string[];
   lastTalkAbout: string;
   avoidTalkingAbout: string;
   notes: string;
+  conversationStarters: string;
 }

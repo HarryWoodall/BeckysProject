@@ -44,11 +44,13 @@ const Category = ({ route, navigation }: CategoryProps) => {
           let link: Link = { id: person.id!, text: person.name };
           return link;
         })}
-        linkRoute="PersonProfile"
+        linkRoute="Person"
         navigation={navigation}
+        messageIfEmpty="There are not people in this group"
       />
 
-      <Text>{category?.notes}</Text>
+      <DataField title="Notes" text={category?.notes} />
+      <DefaultButton text="Edit" onPress={() => navigation.navigate("CategoryForm", { previousScreen: "Category", categoryModel: category })} />
     </ScrollView>
   );
 };

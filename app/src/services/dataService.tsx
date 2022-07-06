@@ -63,6 +63,22 @@ export const storeUser = async (value: UserModel) => {
   }
 };
 
+export const updatePerson = async (value: UserModel, key: string) => {
+  try {
+    const personData = await AsyncStorage.getItem(USER_KEY);
+    const personList = JSON.parse(personData!) as UserModel[];
+    let personIndex = personList.findIndex((user) => user.id == key);
+
+    if (personIndex !== -1) {
+      personList[personIndex] = value;
+      await AsyncStorage.setItem(USER_KEY, JSON.stringify(personList));
+      console.log("person updated successfully");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const getUser = async (key: string): Promise<UserModel | undefined> => {
   try {
     let userData = await AsyncStorage.getItem(USER_KEY);
@@ -77,7 +93,7 @@ export const getUsers = async (keys: string[]): Promise<UserModel[] | undefined>
   try {
     let userData = await AsyncStorage.getItem(USER_KEY);
     let userList = JSON.parse(userData!) as UserModel[];
-    return userList.filter((user) => keys.includes(user.id!));
+    return userList.filter((user) => keys.includes(user.id!)) || [];
   } catch (e) {
     console.log(e);
   }
@@ -164,6 +180,22 @@ export const getAllEvents = async (): Promise<EventModel[] | undefined> => {
   }
 };
 
+export const updateEvent = async (value: EventModel, key: string) => {
+  try {
+    const eventData = await AsyncStorage.getItem(EVENT_KEY);
+    const eventList = JSON.parse(eventData!) as EventModel[];
+    let eventIndex = eventList.findIndex((event) => event.id == key);
+
+    if (eventIndex !== -1) {
+      eventList[eventIndex] = value;
+      await AsyncStorage.setItem(EVENT_KEY, JSON.stringify(eventList));
+      console.log("event updated successfully");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const removeEvent = async (key: string) => {
   try {
     const eventData = await AsyncStorage.getItem(EVENT_KEY);
@@ -231,6 +263,22 @@ export const getAllCategorys = async (): Promise<CategoryModel[] | undefined> =>
   try {
     let categoryData = await AsyncStorage.getItem(CATEGORY_KEY);
     return JSON.parse(categoryData!) as CategoryModel[];
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const updateCategory = async (value: CategoryModel, key: string) => {
+  try {
+    const categoryData = await AsyncStorage.getItem(CATEGORY_KEY);
+    const categoryList = JSON.parse(categoryData!) as CategoryModel[];
+    let categoryIndex = categoryList.findIndex((category) => category.id == key);
+
+    if (categoryIndex !== -1) {
+      categoryList[categoryIndex] = value;
+      await AsyncStorage.setItem(CATEGORY_KEY, JSON.stringify(categoryList));
+      console.log("category updated successfully");
+    }
   } catch (e) {
     console.log(e);
   }
