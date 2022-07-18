@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run selected Jest test",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "test"],
+      "args": ["--prefix app", "--", "-i", "${relativeFile}", "-t", "${selectedText}"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

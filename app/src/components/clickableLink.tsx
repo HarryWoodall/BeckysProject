@@ -6,7 +6,7 @@ import CommonStyle from "../styles/common";
 
 const ClickableLink = (props: ClickableLinkProps) => {
   return (
-    <Pressable onPress={props.onPress} style={props.containerStyle}>
+    <Pressable onPress={props.onPress} style={props.containerStyle} testID={props.testID}>
       <Text style={[CommonStyle.link, props.textStyle]}>{props.text}</Text>
     </Pressable>
   );

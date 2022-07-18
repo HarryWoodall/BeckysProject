@@ -68,6 +68,7 @@ const Person = ({ route, navigation }: PersonProps) => {
     <ScrollView style={CommonStyles.fullWidthScrollView}>
       <View style={PersonStyles.basicInfo}>
         <View>
+          <DataField title="Pronouns" text={user?.pronouns} />
           <DataField title="Name" text={user?.name} />
           <DataField title="Nickname" text={user?.nickname} />
           <DataField title="Age" text={user?.age} />
@@ -88,12 +89,27 @@ const Person = ({ route, navigation }: PersonProps) => {
             containerStyle={{ alignSelf: "center" }}
             text={lastSeenEvent}
             onPress={() => navigation.navigate("Event", { id: user?.seenLastEvent! })}
+            testID="PersonEventLink"
           />
         </View>
       </View>
       <View>
-        <LinkList list={mutualFriends} linkRoute="Person" navigation={navigation} title="Mutual Friends" messageIfEmpty="You have no mutual friends" />
-        <LinkList list={categories} linkRoute="Category" navigation={navigation} title="Caterogies" messageIfEmpty="This person has no categories" />
+        <LinkList
+          list={mutualFriends}
+          linkRoute="Person"
+          navigation={navigation}
+          title="Mutual Friends"
+          messageIfEmpty="You have no mutual friends"
+          testIDPrefix="MutualFriendsLink"
+        />
+        <LinkList
+          list={categories}
+          linkRoute="Category"
+          navigation={navigation}
+          title="Caterogies"
+          messageIfEmpty="This person has no categories"
+          testIDPrefix="CategoryLink"
+        />
       </View>
       <DataField title="Last Spoken about" text={user?.lastTalkAbout} />
       <DataField title="What to avoid" text={user?.avoidTalkingAbout} />

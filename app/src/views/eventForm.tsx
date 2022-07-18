@@ -6,7 +6,7 @@ import { EventFormProps } from "../common/types";
 import CommonStyles from "../styles/common";
 import DefaultButton from "../components/defaultButton";
 import EventModel from "../models/eventModel";
-import { getAllUsers, getUsers, removeAllEvents, storeEvent, updateEvent } from "../services/dataService";
+import { getAllUsers, removeAllEvents, storeEvent, updateEvent } from "../services/dataService";
 import DropDownPicker from "react-native-dropdown-picker";
 import UserModel from "../models/userModel";
 
@@ -22,11 +22,6 @@ const NewEvent = ({ route, navigation }: EventFormProps) => {
   const [openAttendeesSelector, setOpenAttendeesSelector] = useState(false);
   const [attendeesValue, setAttendeesValue] = useState<string[]>([]);
   const [attendeesItems, setAttendeesItems] = useState<UserModel[]>([]);
-
-  interface ItemSchema {
-    label: string;
-    value: string;
-  }
 
   useEffect(() => {
     if (route.params?.eventModel) {
@@ -44,7 +39,6 @@ const NewEvent = ({ route, navigation }: EventFormProps) => {
         setAttendeesValue(ids);
       }
     }
-    console.log("Event data update");
 
     getUserData(route.params?.eventModel?.attendees);
   }, [isFocused]);
@@ -106,11 +100,17 @@ const NewEvent = ({ route, navigation }: EventFormProps) => {
         </View>
 
         <View>
-          <TextInput onChangeText={(newText) => setEventName(newText)} placeholder="Event Name" style={CommonStyles.textbox} value={eventName} />
+          <TextInput
+            onChangeText={(newText) => setEventName(newText)}
+            placeholder="Event Name"
+            style={CommonStyles.textbox}
+            value={eventName}
+            testID="EventName"
+          />
           <Pressable onPress={showDatepicker}>
             <Text style={CommonStyles.dateDisplayText}>{datePickerText}</Text>
           </Pressable>
-          {showDatePicker && <DateTimePicker testID="dateTimePicker" value={eventDate} mode="date" onChange={onChange} />}
+          {showDatePicker && <DateTimePicker testID="DateTimePicker" value={eventDate} mode="date" onChange={onChange} />}
         </View>
 
         <DropDownPicker
@@ -124,9 +124,10 @@ const NewEvent = ({ route, navigation }: EventFormProps) => {
           multiple={true}
           placeholder="Attendees"
           containerStyle={CommonStyles.dropDownPicker}
+          testID="AttendeesPicker"
         />
 
-        <DefaultButton text="Save" onPress={saveData} />
+        <DefaultButton text="Save" onPress={saveData} testID="SaveEventButton" />
         <DefaultButton text="Remove all events" onPress={removeAllEvents} />
       </View>
     </View>

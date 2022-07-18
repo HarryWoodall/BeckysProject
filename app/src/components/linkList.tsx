@@ -8,7 +8,14 @@ import ClickableLink from "./clickableLink";
 
 const LinkList = (props: LinkListProps) => {
   const linkList = props.list?.map((item, index) => {
-    return <ClickableLink key={index.toString()} text={item.text} onPress={() => props.navigation.push(props.linkRoute!, { id: item.id })} />;
+    return (
+      <ClickableLink
+        key={index.toString()}
+        text={item.text}
+        onPress={() => props.navigation.push(props.linkRoute!, { id: item.id })}
+        testID={props.testIDPrefix ? `${props.testIDPrefix}-${index}` : undefined}
+      />
+    );
   });
 
   if (props.list && props.list?.length > 0) {

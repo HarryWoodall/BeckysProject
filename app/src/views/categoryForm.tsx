@@ -73,6 +73,7 @@ const NewCategory = ({ route, navigation }: CategoryFormProps) => {
         await updateCategory(category, category.id!);
         console.log("updating category");
       } else {
+        console.log("storing category");
         await storeCategory(category);
       }
 
@@ -90,7 +91,13 @@ const NewCategory = ({ route, navigation }: CategoryFormProps) => {
           <Image source={require("../../assets/icon.png")} style={{ width: 150, height: 150, alignSelf: "center" }}></Image>
         </View>
 
-        <TextInput onChangeText={(newText) => setCategoryName(newText)} placeholder="Category Name" style={CommonStyles.textbox} value={categoryName} />
+        <TextInput
+          onChangeText={(newText) => setCategoryName(newText)}
+          placeholder="Category Name"
+          style={CommonStyles.textbox}
+          value={categoryName}
+          testID="CategoryNameInput"
+        />
         <TextInput
           multiline
           numberOfLines={4}
@@ -99,6 +106,7 @@ const NewCategory = ({ route, navigation }: CategoryFormProps) => {
           style={CommonStyles.textbox}
           placeholder="Notes"
           value={categoryNotes}
+          testID="NotesInput"
         />
         <DropDownPicker
           mode="BADGE"
@@ -112,7 +120,7 @@ const NewCategory = ({ route, navigation }: CategoryFormProps) => {
           placeholder="Persons"
           containerStyle={CommonStyles.dropDownPicker}
         />
-        <DefaultButton text="Save" onPress={saveData} />
+        <DefaultButton text="Save" onPress={saveData} testID="SaveCategoryButton" />
         <DefaultButton text="Remove all events" onPress={removeAllCategories} />
       </View>
     </View>

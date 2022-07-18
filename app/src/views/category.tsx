@@ -47,6 +47,7 @@ const Category = ({ route, navigation }: CategoryProps) => {
         linkRoute="Person"
         navigation={navigation}
         messageIfEmpty="There are not people in this group"
+        testIDPrefix="PeopleLink"
       />
 
       <DataField title="Notes" text={category?.notes} />

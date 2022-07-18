@@ -56,8 +56,6 @@ export const storeUser = async (value: UserModel) => {
     userList.push(value);
 
     await AsyncStorage.setItem(USER_KEY, JSON.stringify(userList));
-
-    console.log("user stored successfully");
   } catch (e) {
     console.log(e);
   }
@@ -72,7 +70,6 @@ export const updatePerson = async (value: UserModel, key: string) => {
     if (personIndex !== -1) {
       personList[personIndex] = value;
       await AsyncStorage.setItem(USER_KEY, JSON.stringify(personList));
-      console.log("person updated successfully");
     }
   } catch (e) {
     console.log(e);
@@ -92,19 +89,24 @@ export const getUser = async (key: string): Promise<UserModel | undefined> => {
 export const getUsers = async (keys: string[]): Promise<UserModel[] | undefined> => {
   try {
     let userData = await AsyncStorage.getItem(USER_KEY);
+
     let userList = JSON.parse(userData!) as UserModel[];
+
     return userList.filter((user) => keys.includes(user.id!)) || [];
   } catch (e) {
     console.log(e);
   }
 };
 
-export const getAllUsers = async (): Promise<UserModel[] | undefined> => {
+export const getAllUsers = async (): Promise<UserModel[] | []> => {
   try {
     let userData = await AsyncStorage.getItem(USER_KEY);
+    let UserModeObject = JSON.parse(userData!) as UserModel[];
+
     return JSON.parse(userData!) as UserModel[];
   } catch (e) {
     console.log(e);
+    return [];
   }
 };
 
@@ -120,8 +122,6 @@ export const removeUser = async (key: string) => {
     }
 
     await AsyncStorage.setItem(`@users`, JSON.stringify(userList));
-
-    console.log("successfully removed " + userToRemove?.name);
   } catch (e) {
     console.log(e);
   }
@@ -151,8 +151,6 @@ export const storeEvent = async (value: EventModel) => {
     eventList.push(value);
 
     await AsyncStorage.setItem(EVENT_KEY, JSON.stringify(eventList));
-
-    console.log("Event stored successfully");
   } catch (e) {
     console.log(e);
   }
@@ -162,8 +160,6 @@ export const getEvent = async (key: string): Promise<EventModel | undefined> => 
   try {
     let eventData = await AsyncStorage.getItem(EVENT_KEY);
     let eventList = JSON.parse(eventData!) as EventModel[];
-    console.log(eventData);
-    console.log(key);
 
     return eventList.find((event) => event.id == key);
   } catch (e) {
@@ -171,12 +167,13 @@ export const getEvent = async (key: string): Promise<EventModel | undefined> => 
   }
 };
 
-export const getAllEvents = async (): Promise<EventModel[] | undefined> => {
+export const getAllEvents = async (): Promise<EventModel[] | []> => {
   try {
     let eventData = await AsyncStorage.getItem(EVENT_KEY);
     return JSON.parse(eventData!) as EventModel[];
   } catch (e) {
     console.log(e);
+    return [];
   }
 };
 
@@ -189,7 +186,6 @@ export const updateEvent = async (value: EventModel, key: string) => {
     if (eventIndex !== -1) {
       eventList[eventIndex] = value;
       await AsyncStorage.setItem(EVENT_KEY, JSON.stringify(eventList));
-      console.log("event updated successfully");
     }
   } catch (e) {
     console.log(e);
@@ -208,8 +204,6 @@ export const removeEvent = async (key: string) => {
     }
 
     await AsyncStorage.setItem(EVENT_KEY, JSON.stringify(eventList));
-
-    console.log("successfully removed " + eventToRemove?.name);
   } catch (e) {
     console.log(e);
   }
@@ -217,7 +211,6 @@ export const removeEvent = async (key: string) => {
 
 export const removeAllEvents = async () => {
   await AsyncStorage.removeItem(EVENT_KEY);
-  console.log("All events removed");
 };
 
 /**
@@ -239,8 +232,6 @@ export const storeCategory = async (value: CategoryModel) => {
     categoryList.push(value);
 
     await AsyncStorage.setItem(CATEGORY_KEY, JSON.stringify(categoryList));
-
-    console.log("Category stored successfully");
   } catch (e) {
     console.log(e);
   }
@@ -250,8 +241,6 @@ export const getCategory = async (key: string): Promise<CategoryModel | undefine
   try {
     let categoryData = await AsyncStorage.getItem(CATEGORY_KEY);
     let categoryList = JSON.parse(categoryData!) as CategoryModel[];
-    console.log(categoryData);
-    console.log(key);
 
     return categoryList.find((category) => category.id == key);
   } catch (e) {
@@ -259,25 +248,26 @@ export const getCategory = async (key: string): Promise<CategoryModel | undefine
   }
 };
 
-export const getAllCategorys = async (): Promise<CategoryModel[] | undefined> => {
+export const getAllCategorys = async (): Promise<CategoryModel[] | []> => {
   try {
     let categoryData = await AsyncStorage.getItem(CATEGORY_KEY);
     return JSON.parse(categoryData!) as CategoryModel[];
   } catch (e) {
     console.log(e);
+    return [];
   }
 };
 
 export const updateCategory = async (value: CategoryModel, key: string) => {
   try {
     const categoryData = await AsyncStorage.getItem(CATEGORY_KEY);
+
     const categoryList = JSON.parse(categoryData!) as CategoryModel[];
     let categoryIndex = categoryList.findIndex((category) => category.id == key);
 
     if (categoryIndex !== -1) {
       categoryList[categoryIndex] = value;
       await AsyncStorage.setItem(CATEGORY_KEY, JSON.stringify(categoryList));
-      console.log("category updated successfully");
     }
   } catch (e) {
     console.log(e);

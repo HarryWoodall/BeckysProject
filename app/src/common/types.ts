@@ -37,6 +37,7 @@ export type DefaultButtonProps = {
   text: string;
   onPress: (event: GestureResponderEvent) => void;
   key?: string;
+  testID?: string;
 };
 
 export type ClickableLinkProps = {
@@ -45,6 +46,7 @@ export type ClickableLinkProps = {
   key?: string;
   textStyle?: TextStyle;
   containerStyle?: ViewStyle;
+  testID?: string;
 };
 
 export type TextListProps = {
@@ -64,6 +66,7 @@ export type LinkListProps = {
   linkRoute: keyof RootStackParamList;
   navigation: NativeStackNavigationProp<RootStackParamList>;
   messageIfEmpty?: string;
+  testIDPrefix?: string;
 };
 
 export type DataFieldProps = {

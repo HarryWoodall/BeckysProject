@@ -1,0 +1,3 @@
+{
+  "jest.jestCommandLine": "npm test --prefix app\\ --maxWorkers=4 --watch --"
+}

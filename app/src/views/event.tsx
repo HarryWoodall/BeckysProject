@@ -20,9 +20,13 @@ const Event = ({ route, navigation }: EventProps) => {
   useEffect(() => {
     async function getEventData() {
       let eventData = await getEvent(route.params.id);
+      console.log(eventData);
+
       setEvent(eventData!);
 
       let attendees = await getUsers(eventData?.attendees!);
+      console.log("Attendees: ", attendees);
+
       setAttendess(attendees);
     }
     console.log("User data update");
@@ -48,6 +52,7 @@ const Event = ({ route, navigation }: EventProps) => {
           messageIfEmpty="No Attendees"
           linkRoute="Person"
           navigation={navigation}
+          testIDPrefix="AttendeeLink"
         />
       </View>
       <DefaultButton text="Edit" onPress={() => navigation.navigate("EventForm", { previousScreen: "Event", eventModel: event })} />

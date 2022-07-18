@@ -13,6 +13,7 @@ const DefaultButton = (props: DefaultButtonProps) => {
         },
         Style.button,
       ]}
+      testID={props.testID}
     >
       <Text style={Style.text}>{props.text}</Text>
     </Pressable>

@@ -47,6 +47,8 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
   const [image, setImage] = useState<string>("");
 
   useEffect(() => {
+    console.log("Use Effect triggered");
+
     if (route.params?.personModel) {
       const person = route.params.personModel;
       setPronouns(person.pronouns);
@@ -62,28 +64,25 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
       setAvoid(person.avoidTalkingAbout);
       setNotes(person.notes);
       setConversationStarters(person.conversationStarters);
-
       setDatePickerText(new Date(person.seenLast).toLocaleDateString());
     }
 
     async function getData() {
-      let people = (await getAllUsers()) || [];
+      let people = await getAllUsers();
       if (people) setMutualFriendsItems(people);
 
       let categories = await getAllCategorys();
       if (categories) setCategoriesItems(categories);
 
-      let events = (await getAllEvents()) || [];
+      let events = await getAllEvents();
       if (events) setLastSceneEventItems(events);
     }
-    console.log(route.params);
-    console.log("User data update");
 
     getData();
   }, [isFocused]);
 
   useEffect(() => {
-    if (mutualFriendsValue.includes("NEW_PERSON")) {
+    if (mutualFriendsValue && mutualFriendsValue.includes("NEW_PERSON")) {
       setMutualFriendsValue([]);
 
       navigation.push("PersonForm", { previousScreen: "PersonForm" });
@@ -91,7 +90,7 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
   }, [mutualFriendsValue]);
 
   useEffect(() => {
-    if (categoriesValue.includes("NEW_CATEGORY")) {
+    if (categoriesValue && categoriesValue.includes("NEW_CATEGORY")) {
       setCategoriesValue([]);
 
       navigation.push("CategoryForm", { previousScreen: "PersonForm" });
@@ -99,7 +98,7 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
   }, [categoriesValue]);
 
   useEffect(() => {
-    if (lastSceneEventValue == "NEW_EVENT") {
+    if (lastSceneEventValue && lastSceneEventValue == "NEW_EVENT") {
       setLastSceneEventValue("");
 
       navigation.push("EventForm", { previousScreen: "PersonForm" });
@@ -148,9 +147,9 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
       id: route.params?.personModel?.id,
     };
 
-    console.log(user);
-
     async function storeData() {
+      console.log("Storing person data");
+
       if (route.params?.personModel) {
         await updatePerson(user, route.params.personModel.id!);
       } else {
@@ -164,6 +163,8 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
   };
 
   const mapFriends = () => {
+    console.log("Mapping friends");
+
     let friends = mutualFriendsItems?.map((item) => {
       return { label: item.name, value: item.id };
     });
@@ -213,17 +214,33 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
     }
   };
 
-  console.log(image);
-
   return (
     <ScrollView style={CommonStyles.fullWidthScrollView} nestedScrollEnabled={true}>
       <View style={PersonFormStyles.basicInfo}>
         <View>
-          <TextInput onChangeText={(newText) => setPronouns(newText)} placeholder="Pronouns" style={CommonStyles.textbox} value={pronouns} />
-          <TextInput onChangeText={(newText) => setName(newText)} placeholder="Name" style={CommonStyles.textbox} value={name} />
-          <TextInput onChangeText={(newText) => setNickname(newText)} placeholder="Nickname" style={CommonStyles.textbox} value={nickname} />
-          <TextInput onChangeText={(newText) => setAge(newText)} placeholder="Age" style={CommonStyles.textbox} value={age} />
-          <TextInput onChangeText={(newText) => setKnown(newText)} placeholder="How do you know them" style={CommonStyles.textbox} value={known} />
+          <TextInput
+            onChangeText={(newText) => setPronouns(newText)}
+            placeholder="Pronouns"
+            style={CommonStyles.textbox}
+            value={pronouns}
+            testID="PronounsInput"
+          />
+          <TextInput onChangeText={(newText) => setName(newText)} placeholder="Name" style={CommonStyles.textbox} value={name} testID="NameInput" />
+          <TextInput
+            onChangeText={(newText) => setNickname(newText)}
+            placeholder="Nickname"
+            style={CommonStyles.textbox}
+            value={nickname}
+            testID="NicknameInput"
+          />
+          <TextInput onChangeText={(newText) => setAge(newText)} placeholder="Age" style={CommonStyles.textbox} value={age} testID="AgeInput" />
+          <TextInput
+            onChangeText={(newText) => setKnown(newText)}
+            placeholder="How do you know them"
+            style={CommonStyles.textbox}
+            value={known}
+            testID="KnownInput"
+          />
         </View>
         <View>
           <Pressable onPress={pickImage}>
@@ -233,7 +250,9 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
       </View>
       <View style={PersonFormStyles.dateAndEventContainer}>
         <Pressable onPress={showDatepicker}>
-          <Text style={CommonStyles.dateDisplayText}>{datePickerText}</Text>
+          <Text style={CommonStyles.dateDisplayText} testID="LastSceenDate">
+            {datePickerText}
+          </Text>
         </Pressable>
         {showDatePicker && <DateTimePicker testID="dateTimePicker" value={date} mode={mode} is24Hour={true} onChange={onDateChange} />}
         <Text>at</Text>
@@ -248,6 +267,7 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
           listMode="SCROLLVIEW"
           dropDownDirection="BOTTOM"
           style={PersonFormStyles.eventPicker}
+          testID="LastSceenEventDropdown"
         />
       </View>
       <Text style={CommonStyles.heading2}>Mutual Friends</Text>
@@ -266,8 +286,11 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
           containerStyle={CommonStyles.dropDownPicker}
           zIndex={3000}
           zIndexInverse={1000}
+          testID="MutualFriendsDropdown"
         />
-        <Text style={CommonStyles.heading2}>Categories</Text>
+        <Text testID="category" style={CommonStyles.heading2}>
+          Categories
+        </Text>
         <DropDownPicker
           open={openCategories}
           value={categoriesValue}
@@ -282,6 +305,7 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
           containerStyle={CommonStyles.dropDownPicker}
           zIndex={2000}
           zIndexInverse={2000}
+          testID="CategoriesDropdown"
         />
       </View>
       <View style={{ alignSelf: "stretch" }}>
@@ -294,6 +318,7 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
           textAlignVertical="top"
           onChangeText={(text) => setTalkAboutLast(text)}
           value={talkAboutLast}
+          testID="TalkAboutLastInput"
         />
 
         <Text style={CommonStyles.heading2}>What to avoid talking about</Text>
@@ -305,6 +330,7 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
           textAlignVertical="top"
           onChangeText={(text) => setAvoid(text)}
           value={avoid}
+          testID="AvoidTalkingInput"
         />
 
         <Text style={CommonStyles.heading2}>Notes</Text>
@@ -316,6 +342,7 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
           textAlignVertical="top"
           onChangeText={(text) => setNotes(text)}
           value={notes}
+          testID="NotesInput"
         />
 
         <Text style={CommonStyles.heading2}>Conversation Starters</Text>
@@ -327,9 +354,10 @@ const NewPersonView = ({ route, navigation }: PersonFormProps) => {
           textAlignVertical="top"
           onChangeText={(text) => setConversationStarters(text)}
           value={conversationStarters}
+          testID="ConversationStartersInput"
         />
       </View>
-      <DefaultButton text="Save" onPress={saveData} />
+      <DefaultButton text="Save" onPress={saveData} testID="SaveUserButton" />
       <DefaultButton text="Remove all users" onPress={removeAllUsers} />
     </ScrollView>
   );
